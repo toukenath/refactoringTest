@@ -12,6 +12,17 @@ export class Item {
 
 export class GildedRose {
 
+
+    readonly NEVER_GONNE_DROP_ITEM: string = 'Sulfuras, Hand of Ragnaros';
+    readonly CONCERT_TICKET: string = 'Backstage passes to a TAFKAL80ETC concert';
+    readonly OLD_CHEESE: string = 'Aged Brie';
+    readonly MAGE_FOOD: string = 'Conjured Mana Cake';
+    readonly MAX_QUALITY: number = 50;
+    readonly MIN_QUALITY: number = 0;
+    readonly TICKET_INTERMEDIATE_SELLIN: number = 10;
+    readonly TICKET_LAST_CALL: number = 5;
+
+
     items: Array<Item>;
 
     constructor(items = [] as Array<Item>) {
@@ -21,15 +32,15 @@ export class GildedRose {
     updateQuality(): Item[] {
         this.items.forEach((item)=> {
             this.decreaseSellIn(item);
-            if (item.name === 'Backstage passes to a TAFKAL80ETC concert') {
+            if (item.name === this.CONCERT_TICKET) {
                 this.handleConcertTicket(item);
                 return;
             } 
-            if (item.name === 'Aged Brie') {
+            if (item.name === this.OLD_CHEESE) {
                 this.increaseQuality(item, (item.sellIn < 0)? 2 : 1);
                 return;
             } 
-            if (item.name === 'Conjured Mana Cake') {
+            if (item.name === this.MAGE_FOOD) {
                 this.decreaseQuality(item, (item.sellIn < 0)? 4 : 2);
                 return;
             }
@@ -40,18 +51,18 @@ export class GildedRose {
     }
 
     isSulfuras(item: Item): boolean {
-        return item.name === 'Sulfuras, Hand of Ragnaros';
+        return item.name === this.NEVER_GONNE_DROP_ITEM;
     }
 
     increaseQuality(item: Item, incrementBy = 1): void {
         if (!this.isSulfuras(item)) {
-            item.quality = (item.quality + incrementBy <= 50)? item.quality + incrementBy : 50
+            item.quality = (item.quality + incrementBy <= this.MAX_QUALITY)? item.quality + incrementBy : this.MAX_QUALITY
         }
     }
 
     decreaseQuality(item: Item, decrementBy = 1): void {
         if (!this.isSulfuras(item)) {
-            item.quality = (item.quality - decrementBy >= 0)? item.quality - decrementBy : 0; 
+            item.quality = (item.quality - decrementBy >= this.MIN_QUALITY)? item.quality - decrementBy : this.MIN_QUALITY; 
         } 
     }
 
@@ -67,8 +78,8 @@ export class GildedRose {
         }
         else {
             this.increaseQuality(item);
-            if (item.sellIn <= 10) {
-                this.increaseQuality(item, (item.sellIn <= 5)? 2 : 1);
+            if (item.sellIn <= this.TICKET_INTERMEDIATE_SELLIN) {
+                this.increaseQuality(item, (item.sellIn <= this.TICKET_LAST_CALL)? 2 : 1);
             }
         }
     }
